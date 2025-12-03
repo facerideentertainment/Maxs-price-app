@@ -1,0 +1,27 @@
+name: Price Scraper Worker
+
+on:
+  schedule:
+    - cron: '*/15 * * * *' # Run every 15 mins
+  workflow_dispatch:      # Allow manual trigger button
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          
+      - name: Install Dependencies
+        run: |
+          pip install firebase-admin crawl4ai
+          playwright install
+          
+      - name: Run Scraper
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: python scrape.py
